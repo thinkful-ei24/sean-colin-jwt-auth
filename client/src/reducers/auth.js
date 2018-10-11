@@ -3,7 +3,10 @@ import {
     CLEAR_AUTH,
     AUTH_REQUEST,
     AUTH_SUCCESS,
-    AUTH_ERROR
+    AUTH_ERROR,
+    // FIXME: remove
+    SET_TIMESTAMP,
+    CHECK_TIMESTAMP
 } from '../actions/auth';
 
 const initialState = {
@@ -38,6 +41,9 @@ export default function reducer(state = initialState, action) {
             loading: false,
             error: action.error
         });
+    // TODO: move
+    } else if(action.type === CHECK_TIMESTAMP) {
+
     }
     return state;
 }

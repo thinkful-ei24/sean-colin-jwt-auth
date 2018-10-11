@@ -33,6 +33,17 @@ export const authError = error => ({
     error
 });
 
+export const SET_TIMESTAMP = 'SET_TIMESTAMP';
+export const setTimestamp = (time) => ({
+  type: SET_TIMESTAMP,
+  time
+});
+
+export const CHECK_TIMESTAMP = 'CHECK_TIMESTAMP';
+export const checkTimestamp = () => ({
+  type: CHECK_TIMESTAMP
+});
+
 // Stores the auth token in state and localStorage, and decodes and stores
 // the user data stored in the token
 const storeAuthInfo = (authToken, dispatch) => {
