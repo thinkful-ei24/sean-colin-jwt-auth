@@ -10,10 +10,10 @@ import {
 } from '../actions/auth';
 
 const initialState = {
-    authToken: null, // authToken !== null does not mean it has been validated
-    currentUser: null,
-    loading: false,
-    error: null
+  authToken: null, // authToken !== null does not mean it has been validated
+  currentUser: null,
+  loading: false,
+  error: null,
 };
 
 export default function reducer(state = initialState, action) {
@@ -41,9 +41,12 @@ export default function reducer(state = initialState, action) {
             loading: false,
             error: action.error
         });
-    // TODO: move
-    } else if(action.type === CHECK_TIMESTAMP) {
-
+    } else if (action.type === SET_TIMESTAMP) {
+      return Object.assign({}, state, {
+        time: action.time
+      })
+    } else {
+      return state;
     }
-    return state;
 }
+

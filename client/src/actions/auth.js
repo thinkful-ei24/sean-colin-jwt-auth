@@ -41,7 +41,7 @@ export const setTimestamp = (time) => ({
 
 export const CHECK_TIMESTAMP = 'CHECK_TIMESTAMP';
 export const checkTimestamp = () => ({
-  type: CHECK_TIMESTAMP
+  type: CHECK_TIMESTAMP,
 });
 
 // Stores the auth token in state and localStorage, and decodes and stores

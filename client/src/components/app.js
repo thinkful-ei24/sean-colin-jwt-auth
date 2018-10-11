@@ -6,7 +6,7 @@ import HeaderBar from './header-bar';
 import LandingPage from './landing-page';
 import Dashboard from './dashboard';
 import RegistrationPage from './registration-page';
-import {refreshAuthToken, checkTimestamp, setTimestamp} from '../actions/auth';
+import {refreshAuthToken, checkTimestamp, setTimestamp, clearAuth} from '../actions/auth';
 
 export class App extends React.Component {
   // Current plan:
@@ -20,7 +20,8 @@ export class App extends React.Component {
         if (!prevProps.loggedIn && this.props.loggedIn) {
             // When we are logged in, refresh the auth token periodically
             this.startPeriodicRefresh();
-            this.startLogoutTimer(); // FIXME:
+            this.props.dispatch(setTimestamp(Date.now()));
+            setInterval(this.autoLogout, 1000); // FIXME:
         } else if (prevProps.loggedIn && !this.props.loggedIn) {
             // Stop refreshing when we log out
             this.stopPeriodicRefresh();
@@ -39,9 +40,21 @@ export class App extends React.Component {
         );
     }
 
-    startLogoutTimer() {
-      this.logoutTimer = setInterval(() => this.props.dispatch(checkTimestamp()), 1000);
+  autoLogout = () => {
+      const timeStamp = this.props.time;
+      if (5 * 60 * 1000 <= Date.now() - timeStamp ) {
+        //clearInterval(this.refreshInterval);
+        this.props.dispatch(clearAuth())
+      } else {
+      }
     }
+
+  stopLogoutTimer() {
+    if (!this.refreshInterval) {
+      return
+    }
+    clearInterval(this.refreshInterval);
+  }
 
     stopPeriodicRefresh() {
         if (!this.refreshInterval) {
@@ -64,8 +77,9 @@ export class App extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    hasAuthToken: state.auth.authToken !== null,
-    loggedIn: state.auth.currentUser !== null
+  hasAuthToken: state.auth.authToken !== null,
+  loggedIn: state.auth.currentUser !== null,
+  time: state.auth.time
 });
 
 // Deal with update blocking - https://reacttraining.com/react-router/web/guides/dealing-with-update-blocking
