@@ -39,9 +39,10 @@ export const setTimestamp = (time) => ({
   time
 });
 
-export const CHECK_TIMESTAMP = 'CHECK_TIMESTAMP';
-export const checkTimestamp = () => ({
-  type: CHECK_TIMESTAMP,
+export const SHOW_LOGOUT_WARNING = 'SHOWED_LOGOUT_WARNING';
+export const showLogoutWarning = (showLogoutWarning) => ({
+  type: SHOW_LOGOUT_WARNING,
+  showLogoutWarning
 });
 
 // Stores the auth token in state and localStorage, and decodes and stores

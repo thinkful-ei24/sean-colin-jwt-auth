@@ -6,27 +6,21 @@ import HeaderBar from './header-bar';
 import LandingPage from './landing-page';
 import Dashboard from './dashboard';
 import RegistrationPage from './registration-page';
-import {refreshAuthToken, checkTimestamp, setTimestamp, clearAuth} from '../actions/auth';
+import {refreshAuthToken, showLogoutWarning, setTimestamp, clearAuth} from '../actions/auth';
 
 export class App extends React.Component {
-  // Current plan:
-  // Set a timer that fires a CHECK_TIMESTAMP event every second
-  // On the reducer for CHECK_TIMESTAMP, calculate the difference between then and now
-  // Depending on that result, either log out or update timestamp
-  // (TIMESTAMP is currently an action, so this would require two actions)
-
 
     componentDidUpdate(prevProps) {
         if (!prevProps.loggedIn && this.props.loggedIn) {
             // When we are logged in, refresh the auth token periodically
             this.startPeriodicRefresh();
             this.props.dispatch(setTimestamp(Date.now()));
-            setInterval(this.autoLogout, 1000); // FIXME:
+            this.logoutInterval = setInterval(this.autoLogout, 1000); // FIXME:
         } else if (prevProps.loggedIn && !this.props.loggedIn) {
             // Stop refreshing when we log out
             this.stopPeriodicRefresh();
+            //this.stopLogoutTimer();
         }
-        this.stopLogoutTimer(); // FIXME:
     }
 
     componentWillUnmount() {
@@ -41,11 +35,14 @@ export class App extends React.Component {
     }
 
   autoLogout = () => {
-      const timeStamp = this.props.time;
-      if (5 * 60 * 1000 <= Date.now() - timeStamp ) {
-        //clearInterval(this.refreshInterval);
+    console.log('autoLogout called');
+      const diff = Date.now() - this.props.time;
+      if (diff >= 1 * 15 * 1000) {
         this.props.dispatch(clearAuth())
-      } else {
+        clearInterval(this.logoutInterval);
+        this.props.dispatch(showLogoutWarning(false));
+      } else if(diff >=  1 * 5 * 1000 && !this.props.showLogoutWarning) {
+        this.props.dispatch(showLogoutWarning(true));
       }
     }
 
@@ -79,7 +76,8 @@ export class App extends React.Component {
 const mapStateToProps = state => ({
   hasAuthToken: state.auth.authToken !== null,
   loggedIn: state.auth.currentUser !== null,
-  time: state.auth.time
+  time: state.auth.time,
+  showedLogoutWarning: state.auth.showedLogoutWarning
 });
 
 // Deal with update blocking - https://reacttraining.com/react-router/web/guides/dealing-with-update-blocking

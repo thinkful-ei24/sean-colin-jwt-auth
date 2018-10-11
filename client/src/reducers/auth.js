@@ -6,7 +6,7 @@ import {
     AUTH_ERROR,
     // FIXME: remove
     SET_TIMESTAMP,
-    CHECK_TIMESTAMP
+    SHOW_LOGOUT_WARNING
 } from '../actions/auth';
 
 const initialState = {
@@ -14,6 +14,7 @@ const initialState = {
   currentUser: null,
   loading: false,
   error: null,
+  showedLogoutWarning: false
 };
 
 export default function reducer(state = initialState, action) {
@@ -44,9 +45,13 @@ export default function reducer(state = initialState, action) {
     } else if (action.type === SET_TIMESTAMP) {
       return Object.assign({}, state, {
         time: action.time
-      })
-    } else {
-      return state;
+      });
+    } else if(action.type === SHOW_LOGOUT_WARNING) {
+      return {
+        ...state,
+        showLogoutWarning: action.showLogoutWarning
+      };
     }
+    return state;
 }
 
